@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ElNotification } from 'element-plus'
+import { ElMessage, ElNotification } from 'element-plus'
 import { getToken } from '@/utils/auth.js';
 
 const service = axios.create({
@@ -14,7 +14,7 @@ service.interceptors.request.use(function (config) {
     if (token) {
         config.headers["Authorization"] = "Bearer "+token
     }
-
+    // console.log("axios",config);
     return config;
 }, function (error) {
     // 对请求错误做些什么
@@ -25,20 +25,34 @@ service.interceptors.request.use(function (config) {
 
 
 // 添加响应拦截器
-// service.interceptors.response.use(function (response) {
-//     // 对响应数据做点什么
-//     return response.data;
-// }, function (error) {
-    // // 对响应错误做点什么
-    // console.log(error);
+service.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    const apiData = response.data
+    // 二进制数据则直接返回
+    const responseType = response.request.responseType
+    if (responseType === 'blob' || responseType === "arraybuffer") return apiData
+    // 判断code 
+    const code = apiData.code
+    if (code === undefined){
+        ElMessage.error("非本系统接口")
+        return Promise.reject(new Error("非本系统接口"))
+    }
+    switch (code){
+        case 0:
+            return apiData;
+    }
+    
+}, function (error) {
+    // 对响应错误做点什么
+    console.log(error);
 
-    // ElNotification({
-    //     message: error.response.data.message || "请求失败",
-    //     type: 'error',
-    //     duration: 3000
-    // })
-//     return Promise.reject(error);
-// })
+    ElNotification({
+        message: error.response.data.message || "请求失败",
+        type: 'error',
+        duration: 3000
+    })
+    return Promise.reject(error);
+})
 
 // service.interceptors.response.use(
 //     (response) => {

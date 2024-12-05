@@ -88,12 +88,12 @@ const onSubmit = () => {
 
         login(form.username, form.password)
             .then((response) => {
-                if (response.data.code === 200) {
+                if (response.code === 0) {
                     toast("登录成功")
 
 
                     //存储token
-                    setToken(response.data.result.token)
+                    setToken(response.token)
 
                     router.push("/")
 

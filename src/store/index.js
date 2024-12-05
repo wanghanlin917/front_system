@@ -30,15 +30,15 @@ const store = createStore({
             const router = useRouter()
             return new Promise((resolve,reject)=>{
                 user_info().then(res => {
-                    if (res.data.code === 401 || res.data.code === 500) {
+                    if (res.code === 401 || res.code === 500) {
                         // Token 过期，显示提示并重定向到登录页面
                         removeToken('admin-token')
                         router.push('/login')
                         toast('Token过期,请重新登录!!!', 'error');
                     } else{
                         // 处理其他情况
-                        commit("SET_USERINFO", res.data.result.data)
-                        commit("SET_MENUS", res.data.result.data.menus)
+                        commit("SET_USERINFO", res.data)
+                        commit("SET_MENUS", res.data.menus)
                         resolve(res)
                     }
 

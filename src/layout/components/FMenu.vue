@@ -78,7 +78,7 @@ const handleSelect = e => {
 }
 </script>
 
-<style scoped>
+<style lang="postcss">
 .f-menu {
   transition: all 0.2s;
   top: 64px;

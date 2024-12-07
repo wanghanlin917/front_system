@@ -33,9 +33,14 @@ service.interceptors.response.use(function (response) {
     if (responseType === 'blob' || responseType === "arraybuffer") return apiData
     // 判断code 
     const code = apiData.code
-    if (code === undefined){
+    if (code === undefined && response.status === "204"){
         ElMessage.error("非本系统接口")
         return Promise.reject(new Error("非本系统接口"))
+    }
+    // console.log("ststus",response.status);
+    // console.log(response);
+    if (response.status.code === "204"){
+        code = 0
     }
     switch (code){
         case 0:

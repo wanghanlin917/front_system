@@ -42,3 +42,18 @@ export function delete_user (id) {
 export function get_folderlist () {
   return axios.get('/folder')
 }
+
+// 删除一级菜单
+export function del_folder  (id) {
+  return axios.delete('/folder/' + id)
+}
+
+// 获取二级菜单
+export function get_secondarymenu (folder_id) {
+  return axios.get('/route',{params:{folder:folder_id}})
+}
+
+// 删除二级菜单
+export function del_secondarymenu(id) {
+  return axios.delete('/route/'+id)
+}

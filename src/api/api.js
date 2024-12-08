@@ -48,6 +48,11 @@ export function del_folder  (id) {
   return axios.delete('/folder/' + id)
 }
 
+// 添加一级菜单
+export function add_folder (data) {
+  return axios.post('/folder',data)
+}
+
 // 获取二级菜单
 export function get_secondarymenu (folder_id) {
   return axios.get('/route',{params:{folder:folder_id}})
@@ -56,4 +61,9 @@ export function get_secondarymenu (folder_id) {
 // 删除二级菜单
 export function del_secondarymenu(id) {
   return axios.delete('/route/'+id)
+}
+
+// 添加二级菜单
+export function add_secondarymenu(data){
+  return axios.post('/route',data)
 }

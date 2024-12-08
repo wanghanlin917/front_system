@@ -1,4 +1,7 @@
 <script setup>
+import FirstMenu  from '@/components/FirstMenu.vue'
+import SecondaryMenu from '@/components/SecondaryMenu.vue'
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import {
   get_folderlist,
@@ -6,7 +9,18 @@ import {
   get_secondarymenu,
   del_secondarymenu
 } from '@/api/api.js'
-import { ElMessage } from 'element-plus'
+
+
+const secondRef = ref(null)
+const secondDrawer = () =>{
+  secondRef.value.open()
+}
+
+const firstRef = ref(null)
+const showDrawer = () =>{
+  firstRef.value.open()
+  console.log("1111",firstRef.value);
+}
 
 const state = ref({
   firstDialogVisible: false,
@@ -18,6 +32,7 @@ const state = ref({
   secondList: [],
   secondSelected: 0
 })
+
 const initFolder = () => {
   state.value.firstLoading = true
   get_folderlist().then(res => {
@@ -92,7 +107,7 @@ onMounted(() => {
                 size="small"
                 type="success"
                 class="button"
-                @click="state.firstDialogVisible = true"
+                @click=showDrawer
                 >新建
               </el-button>
             </div>
@@ -154,6 +169,7 @@ onMounted(() => {
                 size="small"
                 type="success"
                 class="button"
+                @click=secondDrawer
                 >新建
               </el-button>
             </div>
@@ -243,6 +259,9 @@ onMounted(() => {
       </el-col>
     </el-row>
   </div>
+  <first-menu ref="firstRef"></first-menu>
+  <secondary-menu ref="secondRef" :folderId="state.firstSelected"></secondary-menu>
+
 </template>
 
 <style scoped>

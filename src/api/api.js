@@ -67,3 +67,18 @@ export function del_secondarymenu(id) {
 export function add_secondarymenu(data){
   return axios.post('/route',data)
 }
+
+// 获取权限列表
+export function get_permission (router_id) {
+  return axios.get('/permission',{params:{router:router_id}})
+}
+
+// 添加权限
+export function add_permission (data) {
+  return axios.post('/permission',data)
+}
+
+// 删除权限
+export function del_permisssion (id){
+  return axios.delete('/permission/'+id)
+}

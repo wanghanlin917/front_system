@@ -1,16 +1,36 @@
 <script setup>
 import FirstMenu  from '@/components/FirstMenu.vue'
 import SecondaryMenu from '@/components/SecondaryMenu.vue'
+import PermissionList from '@/components/PermissionList.vue'
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import {
   get_folderlist,
   del_folder,
   get_secondarymenu,
-  del_secondarymenu
+  del_secondarymenu,
+  get_permission,
+  del_permisssion
 } from '@/api/api.js'
 
 
+const get_folder_list = (res) =>{
+  state.value.firstList = res
+}
+
+const get_permission_list = (res) =>{
+  state.value.thirdList =res
+  console.log("get_permission",res);
+}
+
+const get_second_list = (res) =>{
+  state.value.secondList = res
+}
+const permissionRef = ref(null)
+const permissionDrawer = () =>{
+  permissionRef.value.open()
+  // get_permission_list()
+}
 const secondRef = ref(null)
 const secondDrawer = () =>{
   secondRef.value.open()
@@ -23,14 +43,17 @@ const showDrawer = () =>{
 }
 
 const state = ref({
-  firstDialogVisible: false,
   firstLoading: false,
   firstList: [],
   firstSelected: 0,
 
   secondLoading: false,
   secondList: [],
-  secondSelected: 0
+  secondSelected: 0,
+
+  thirdLoading:false,
+  thirdList:[]
+
 })
 
 const initFolder = () => {
@@ -63,10 +86,19 @@ const confirmSecondDelete = row => {
   })
 }
 
+const confirmThirdDelete = row =>{
+  del_permisssion(row.id).then(() =>{
+    state.value.thirdList = state.value.thirdList.filter(item =>{
+      return item.id !== row.id
+    })
+  })
+}
+
 const clickFirstRow = row => {
   // console.log(row.id)
   state.value.firstSelected = row.id
   state.value.secondList = []
+  state.value.thirdList = []
   state.value.secondSelected = 0
   state.value.secondLoading = true
   get_secondarymenu(row.id).then(res => {
@@ -78,6 +110,12 @@ const clickFirstRow = row => {
 const clickSecondRow = row => {
   state.value.secondSelected = row.id
   // console.log(row.id)
+  state.value.thirdList = []
+  state.value.thirdLoading = true
+  get_permission(row.id).then((res) => {
+    state.value.thirdList = res.data
+    state.value.thirdLoading = false
+  })
 }
 function doRowClass (target) {
   return function ({ row }) {
@@ -215,13 +253,13 @@ onMounted(() => {
           </el-table>
         </el-card>
       </el-col>
-      <el-col :span="11">
+      <el-col :span="11" v-loading="state.thirdLoading">
         <el-card class="box-card" :body-style="{ padding: '0px' }">
           <template #header>
             <div class="card-header">
               <span>权限列表</span>
               <el-button
-                @click="state.thirdDialog.dialogVisible = true"
+                @click=permissionDrawer
                 v-if="state.secondSelected"
                 size="small"
                 type="success"
@@ -259,8 +297,9 @@ onMounted(() => {
       </el-col>
     </el-row>
   </div>
-  <first-menu ref="firstRef"></first-menu>
-  <secondary-menu ref="secondRef" :folderId="state.firstSelected"></secondary-menu>
+  <first-menu ref="firstRef" @folder_list="get_folder_list"></first-menu>
+  <secondary-menu ref="secondRef" :folderId="state.firstSelected" @onSecond_list="get_second_list"></secondary-menu>
+  <permission-list ref="permissionRef" :routerId="state.secondSelected" @permission_list="get_permission_list" ></permission-list>
 
 </template>
 

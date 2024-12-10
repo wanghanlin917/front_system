@@ -31,9 +31,11 @@
 
 <script setup>
 import {ref} from 'vue'
-import {add_secondarymenu} from '@/api/api.js'
+import {add_secondarymenu,get_secondarymenu} from '@/api/api.js'
 import { ElMessage } from 'element-plus'
 
+const second_list = ref([])
+const emit = defineEmits(["onSecond_list"])
 const props = defineProps({
   folderId:Number
     }) 
@@ -42,12 +44,15 @@ const addSecondMenu = () =>{
   console.log("folderId",props.folderId);
   form.value.folder = props.folderId
   add_secondarymenu(form.value).then(() =>{
+    get_secondarymenu(props.folderId).then((res) =>{
+      second_list.value = res.data
+        emit("onSecond_list",second_list.value )
+    })  
     ElMessage.success("添加成功")
   }).catch(() =>{
     ElMessage.error("添加失败")
   }).finally(()=>{
     dialogFormVisible.value = false
-    location.reload()
   })
 
 

@@ -1,5 +1,5 @@
 <script setup>
-import FirstMenu  from '@/components/FirstMenu.vue'
+import FirstMenu from '@/components/FirstMenu.vue'
 import SecondaryMenu from '@/components/SecondaryMenu.vue'
 import PermissionList from '@/components/PermissionList.vue'
 import { ElMessage } from 'element-plus'
@@ -13,33 +13,32 @@ import {
   del_permisssion
 } from '@/api/api.js'
 
-
-const get_folder_list = (res) =>{
+const get_folder_list = res => {
   state.value.firstList = res
 }
 
-const get_permission_list = (res) =>{
-  state.value.thirdList =res
-  console.log("get_permission",res);
+const get_permission_list = res => {
+  state.value.thirdList = res
+  console.log('get_permission', res)
 }
 
-const get_second_list = (res) =>{
+const get_second_list = res => {
   state.value.secondList = res
 }
 const permissionRef = ref(null)
-const permissionDrawer = () =>{
+const permissionDrawer = () => {
   permissionRef.value.open()
   // get_permission_list()
 }
 const secondRef = ref(null)
-const secondDrawer = () =>{
+const secondDrawer = () => {
   secondRef.value.open()
 }
 
 const firstRef = ref(null)
-const showDrawer = () =>{
+const showDrawer = () => {
   firstRef.value.open()
-  console.log("1111",firstRef.value);
+  console.log('1111', firstRef.value)
 }
 
 const state = ref({
@@ -50,10 +49,7 @@ const state = ref({
   secondLoading: false,
   secondList: [],
   secondSelected: 0,
-
-  thirdLoading:false,
-  thirdList:[]
-
+  thirdList: []
 })
 
 const initFolder = () => {
@@ -86,9 +82,9 @@ const confirmSecondDelete = row => {
   })
 }
 
-const confirmThirdDelete = row =>{
-  del_permisssion(row.id).then(() =>{
-    state.value.thirdList = state.value.thirdList.filter(item =>{
+const confirmThirdDelete = row => {
+  del_permisssion(row.id).then(() => {
+    state.value.thirdList = state.value.thirdList.filter(item => {
       return item.id !== row.id
     })
   })
@@ -112,7 +108,7 @@ const clickSecondRow = row => {
   // console.log(row.id)
   state.value.thirdList = []
   state.value.thirdLoading = true
-  get_permission(row.id).then((res) => {
+  get_permission(row.id).then(res => {
     state.value.thirdList = res.data
     state.value.thirdLoading = false
   })
@@ -145,7 +141,7 @@ onMounted(() => {
                 size="small"
                 type="success"
                 class="button"
-                @click=showDrawer
+                @click="showDrawer"
                 >新建
               </el-button>
             </div>
@@ -207,7 +203,7 @@ onMounted(() => {
                 size="small"
                 type="success"
                 class="button"
-                @click=secondDrawer
+                @click="secondDrawer"
                 >新建
               </el-button>
             </div>
@@ -259,7 +255,7 @@ onMounted(() => {
             <div class="card-header">
               <span>权限列表</span>
               <el-button
-                @click=permissionDrawer
+                @click="permissionDrawer"
                 v-if="state.secondSelected"
                 size="small"
                 type="success"
@@ -298,9 +294,16 @@ onMounted(() => {
     </el-row>
   </div>
   <first-menu ref="firstRef" @folder_list="get_folder_list"></first-menu>
-  <secondary-menu ref="secondRef" :folderId="state.firstSelected" @onSecond_list="get_second_list"></secondary-menu>
-  <permission-list ref="permissionRef" :routerId="state.secondSelected" @permission_list="get_permission_list" ></permission-list>
-
+  <secondary-menu
+    ref="secondRef"
+    :folderId="state.firstSelected"
+    @onSecond_list="get_second_list"
+  ></secondary-menu>
+  <permission-list
+    ref="permissionRef"
+    :routerId="state.secondSelected"
+    @permission_list="get_permission_list"
+  ></permission-list>
 </template>
 
 <style scoped>

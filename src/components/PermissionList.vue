@@ -1,5 +1,11 @@
 <template>
-  <el-dialog v-model="dialogFormVisible" title="添加权限" width="450px">
+  <el-dialog
+    v-model="dialogFormVisible"
+    :close-on-click-modal="false"
+    @close="resetForm"
+    title="添加权限"
+    width="450px"
+  >
     <el-form :model="form" ref="formRef" :rules="rules">
       <el-form-item label="标题" label-width="80px" prop="title">
         <el-input v-model="form.title" />
@@ -42,6 +48,7 @@ const rules = ref({
   name: [{ required: true, message: '请输入API代码', trigger: 'blur' }],
   method: [{ required: true, message: '请输入方法', trigger: 'blur' }]
 })
+const dialogFormVisible = ref(false)
 
 const options = [
   {
@@ -74,34 +81,42 @@ const emit = defineEmits(['permission_list'])
 const props = defineProps({
   routerId: Number
 })
+const resetForm = () => {
+  formRef.value.resetFields()
+  console.log('关闭')
+
+  console.log(formRef.value)
+
+  // dialogFormVisible.value = false
+}
 
 const addPermission = () => {
   // console.log("1111",props.routerId);
-  formRef.value.validate(valid => {
+  formRef.value.validate(async valid => {
     console.log(valid)
-    if (valid) {
-      form.value.router = props.routerId
-      add_permission(form.value)
-        .then(() => {
-          get_permission(props.routerId).then(res => {
-            permission_list.value = res.data
-            emit('permission_list', permission_list.value)
-            formRef.value.resetField()
-          })
-
-          ElMessage.success('添加成功')
-        })
-        .catch(res => {
-          console.log(res)
-        })
-        .finally(() => {
-          dialogFormVisible.value = false
-        })
+    if (!valid) {
+      return
     }
+    form.value.router = props.routerId
+    await add_permission(form.value)
+      .then(() => {
+        get_permission(props.routerId).then(res => {
+          permission_list.value = res.data
+          emit('permission_list', permission_list.value) 
+        })
+
+        ElMessage.success('添加成功')
+      })
+      .catch(res => {
+        console.log(res)
+      })
+      .finally(() => {
+        dialogFormVisible.value = false
+        // handleClose()
+      })
   })
 }
 
-const dialogFormVisible = ref(false)
 const open = () => {
   dialogFormVisible.value = true
 }

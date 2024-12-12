@@ -44,41 +44,46 @@ export function get_folderlist () {
 }
 
 // 删除一级菜单
-export function del_folder  (id) {
+export function del_folder (id) {
   return axios.delete('/folder/' + id)
 }
 
 // 添加一级菜单
 export function add_folder (data) {
-  return axios.post('/folder',data)
+  return axios.post('/folder', data)
 }
 
 // 获取二级菜单
 export function get_secondarymenu (folder_id) {
-  return axios.get('/route',{params:{folder:folder_id}})
+  return axios.get('/route', { params: { folder: folder_id } })
 }
 
 // 删除二级菜单
-export function del_secondarymenu(id) {
-  return axios.delete('/route/'+id)
+export function del_secondarymenu (id) {
+  return axios.delete('/route/' + id)
 }
 
 // 添加二级菜单
-export function add_secondarymenu(data){
-  return axios.post('/route',data)
+export function add_secondarymenu (data) {
+  return axios.post('/route', data)
 }
 
 // 获取权限列表
 export function get_permission (router_id) {
-  return axios.get('/permission',{params:{router:router_id}})
+  return axios.get('/permission', { params: { router: router_id } })
 }
 
 // 添加权限
 export function add_permission (data) {
-  return axios.post('/permission',data)
+  return axios.post('/permission', data)
 }
 
 // 删除权限
-export function del_permisssion (id){
-  return axios.delete('/permission/'+id)
+export function del_permisssion (id) {
+  return axios.delete('/permission/' + id)
+}
+
+// 获取角色列表
+export function get_role () {
+  return axios.get('/role')
 }

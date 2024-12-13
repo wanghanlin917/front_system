@@ -106,8 +106,11 @@ onMounted(() => {
       </el-col>
     </el-row>
   </div>
-  <RoleDrawer title="添加用户" ref="roleRef">
-    <div>ffffwtwty</div>
+  <RoleDrawer @submit="onSubmit" title="添加用户" ref="roleRef">
+    <el-form ref="roleRef" :rules="roleRules" :model='form' label-width="80px" size="small">
+      
+      </el-form>
+    
   </RoleDrawer>
 </template>
 

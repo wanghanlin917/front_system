@@ -33,6 +33,9 @@ const open = () => {
 const close = () => {
   dialogFormVisible.value = false
 }
+// 提交
+const emit = defineEmits(['submit'])
+const submit = () => emit('submit')
 defineExpose({
   open,
   close

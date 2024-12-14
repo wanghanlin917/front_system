@@ -3,17 +3,16 @@
     <el-dialog
       v-model="dialogFormVisible"
       :close-on-click-modal="false"
-      @close="resetForm"
       :title="title"
       width="450px"
     >
-      <slot></slot>
+    <slot></slot>
       <template #footer>
         <div class="dialog-footer">
+          <el-button type="default" @click="closed">取消</el-button>
           <el-button type="primary" @click="submit" :loading="loading">
             确定
           </el-button>
-          <el-button type="default" @click="close">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -34,8 +33,9 @@ const close = () => {
   dialogFormVisible.value = false
 }
 // 提交
-const emit = defineEmits(['submit'])
+const emit = defineEmits(['submit','closed'])
 const submit = () => emit('submit')
+const closed = () => emit('closed')
 defineExpose({
   open,
   close

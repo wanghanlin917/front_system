@@ -4,18 +4,28 @@ import { get_role } from '@/api/api.js'
 import RoleDrawer from '@/components/RoleDrawer.vue'
 
 const roleRef = ref(null)
+const role = ref(null)
 const state = ref({
   roleLoading: false,
   roleSelected: 0,
   roleList: []
 })
-// const roleDialog = ref({
-//   dialogVisible: false
-// })
-
+const form = ref({
+  role:""
+})
+const roleRules = ref({
+  role:[{require:true,message:'角色不能为空',trigger:'blur'}]
+})
 const showDraw = () => {
   roleRef.value.open()
   console.log('hahah')
+}
+const onClose = () =>{
+  roleRef.value.close()
+  console.log("hahahah",roleRef.value);
+}
+const onSubmit = () =>{
+  console.log("hhddlk");
 }
 const clickRoleRow = row => {
   state.value.roleSelected = row.id
@@ -106,12 +116,12 @@ onMounted(() => {
       </el-col>
     </el-row>
   </div>
-  <RoleDrawer @submit="onSubmit" title="添加用户" ref="roleRef">
-    <el-form ref="roleRef" :rules="roleRules" :model='form' label-width="80px" size="small">
-      
+  <role-drawer @closed="onClose" @submit="onSubmit" title="添加角色" ref="roleRef">
+    <el-form ref="role" :rules="roleRules" :model='form' label-width="80px" size="small">
+        <!-- <el-input v-model="form.role" placeholder="请输入角色"></el-input> -->
       </el-form>
     
-  </RoleDrawer>
+  </role-drawer>
 </template>
 
 <style scoped>

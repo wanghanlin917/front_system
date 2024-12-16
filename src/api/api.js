@@ -87,3 +87,13 @@ export function del_permisssion (id) {
 export function get_role () {
   return axios.get('/role')
 }
+
+// 添加角色
+export function add_role (data) {
+  return axios.post('/role',data)
+}
+
+// 删除角色
+export function del_role(id) {
+  return axios.delete('/role/'+id)
+}

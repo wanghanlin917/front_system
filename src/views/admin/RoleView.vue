@@ -1,31 +1,62 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { get_role } from '@/api/api.js'
+import { get_role,add_role,del_role } from '@/api/api.js'
 import RoleDrawer from '@/components/RoleDrawer.vue'
+import { ElMessage } from 'element-plus';
 
+
+const doSavePermission =() =>{
+  console.log("save");
+}
 const roleRef = ref(null)
-const role = ref(null)
+const roleDataRef = ref(null)
 const state = ref({
   roleLoading: false,
+  permissionLoading:false,
   roleSelected: 0,
-  roleList: []
+  roleList: [],
 })
 const form = ref({
   role:""
 })
 const roleRules = ref({
-  role:[{require:true,message:'角色不能为空',trigger:'blur'}]
+  role:[{required:true,message:'角色不能为空',trigger:'blur'}]
 })
+const confirmRoleDelete = (row) =>{
+  console.log(row.id);
+  del_role(row.id).then(()=>{
+    InitRoleList()
+    ElMessage.success("删除成功")
+  })
+}
 const showDraw = () => {
   roleRef.value.open()
   console.log('hahah')
 }
 const onClose = () =>{
+  roleDataRef.value.resetFields()
   roleRef.value.close()
-  console.log("hahahah",roleRef.value);
+  // console.log("hahahah",roleRef.value);
 }
 const onSubmit = () =>{
-  console.log("hhddlk");
+
+  // roleRef.value.showLoading()
+  // console.log("hhddlk");
+  roleDataRef.value.validate((valid) => {
+    if(!valid) return
+    roleRef.value.showLoading()
+    add_role({'title':form.value.role}).then((res)=>{
+      console.log(res);
+      get_role().then((res)=>{
+        state.value.roleList = res.data
+      })
+      ElMessage.success("添加成功")
+    }).finally(() =>{
+      roleRef.value.hideLoading()
+      onClose()
+    })
+
+  } )
 }
 const clickRoleRow = row => {
   state.value.roleSelected = row.id
@@ -114,13 +145,29 @@ onMounted(() => {
           </el-table>
         </el-card>
       </el-col>
+      <el-col :span="19" v-loading="permissionLoading">
+        <el-card class="box-card" shadow="never" :body-style="{ padding: '0px'}">
+          <template #header>
+                        <div class="card-header">
+                            <span>分配权限</span>
+                            <el-button @click="doSavePermission" v-if="state.roleSelected>0" size="small" type="success"
+                                       class="button">保存
+                            </el-button>
+                        </div>
+          </template>
+          <div style="color: #d4d4d4;padding:10px  5px;font-size: 13px;border-bottom: 1px solid #e4e7ed">
+                        提示：请先选择角色，然后再分配权限
+          </div>
+        </el-card>
+      </el-col>
     </el-row>
   </div>
   <role-drawer @closed="onClose" @submit="onSubmit" title="添加角色" ref="roleRef">
-    <el-form ref="role" :rules="roleRules" :model='form' label-width="80px" size="small">
-        <!-- <el-input v-model="form.role" placeholder="请输入角色"></el-input> -->
+    <el-form ref="roleDataRef" :rules="roleRules" :model='form' label-width="80px">
+      <el-form-item label="角色名称" label-width="80px" prop="role">
+        <el-input v-model="form.role" placeholder="请输入角色" autocomplete="off"></el-input>
+      </el-form-item>
       </el-form>
-    
   </role-drawer>
 </template>
 

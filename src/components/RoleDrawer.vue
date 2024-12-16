@@ -32,13 +32,23 @@ const open = () => {
 const close = () => {
   dialogFormVisible.value = false
 }
+const loading = ref(false)
+const showLoading = () => {
+  loading.value = true
+}
+const hideLoading = () => {
+  loading.value = false
+}
 // 提交
 const emit = defineEmits(['submit','closed'])
 const submit = () => emit('submit')
 const closed = () => emit('closed')
+
 defineExpose({
   open,
-  close
+  close,
+  showLoading,
+  hideLoading
 })
 </script>
 

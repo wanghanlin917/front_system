@@ -1,22 +1,29 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { get_role, add_role, del_role } from '@/api/api.js'
+import { get_role, add_role, del_role,get_permissionValue } from '@/api/api.js'
 import RoleDrawer from '@/components/RoleDrawer.vue'
 import { ElMessage } from 'element-plus'
+import { id } from 'element-plus/es/locales.mjs';
 
 const doSavePermission = () => {
+
   console.log('save')
 }
+const defaultProps = ref({
+  label:"title"
+})
 const roleRef = ref(null)
 const roleDataRef = ref(null)
 const state = ref({
   roleLoading: false,
   permissionLoading: false,
   roleSelected: 0,
-  roleList: []
+  roleList: [],
+  treeList: []
 })
+// state.value.treeList = [{id:1,title:"m1",children:[{id:10,title:"c1",children:[{id:30,title:"d1"}]}]},{id:2,title:"m2"},{id:3,title:"m3"}]
 const form = ref({
-  role: ''
+  role: ''  
 })
 const roleRules = ref({
   role: [{ required: true, message: '角色不能为空', trigger: 'blur' }]
@@ -61,9 +68,18 @@ const clickRoleRow = row => {
   state.value.roleSelected = row.id
 }
 
-function doRowClass (target) {
-  return function ({ row }) {
-    if (row.id === target) {
+// function doRowClass (target) {
+//   return function ({ row }) {
+//     if (row.id === target) {
+//       return 'row-active'
+//     }
+//     return ''
+//   }
+// }
+const doRowClass = (target) =>{
+  return ({row}) => {
+    console.log({row});
+    if(row.id===target){
       return 'row-active'
     }
     return ''
@@ -76,9 +92,18 @@ const InitRoleList = () => {
     state.value.roleList = res.data
   })
 }
+const InitPermissionTotal = () =>{
+  state.value.permissionLoading = true
+  get_permissionValue().then(res=>{
+    state.value.treeList =res.data
+    console.log("全部权限",res);
+    state.value.permissionLoading = false
+  })
+}
 
 onMounted(() => {
   InitRoleList()
+  InitPermissionTotal()
 })
 </script>
 
@@ -144,7 +169,7 @@ onMounted(() => {
           </el-table>
         </el-card>
       </el-col>
-      <el-col :span="19" v-loading="permissionLoading">
+      <el-col :span="19" v-loading="state.permissionLoading">
         <el-card
           class="box-card"
           shadow="never"
@@ -173,6 +198,12 @@ onMounted(() => {
           >
             提示：请先选择角色，然后再分配权限
           </div>
+          <div class="tree-wrapper">
+          <div v-for="item in state.treeList" :key="item.id" class="tree-item">
+            <div class="tree-title">{{ item.title }}</div>
+            <el-tree ref="treeRef" :show-checkbox="state.roleSelected>0" :data="item.children" node-key="id" :props="defaultProps" show-checkbox :default-expand-all="true"></el-tree>
+          </div>
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -200,7 +231,7 @@ onMounted(() => {
   </role-drawer>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .card-header {
   display: flex;
   flex-direction: row;
@@ -213,6 +244,23 @@ onMounted(() => {
   height: 18px;
   width: 18px;
 }
+.tree-wrapper{
+  display: flex;
+  justify-content: space-between;
+  .tree-item{
+    flex: 1;
+    border-right: 1px solid #e4e7ec;
+    padding: 0px 4px;
+    text-align: center;
+    .tree-title{
+      background:#f5f7fa;
+      text-align: center;
+      padding: 10px 0;
+      margin-bottom: 12px;
+    }
+  }
+}
+
 </style>
 <style>
 .el-table .row-active {

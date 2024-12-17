@@ -97,3 +97,8 @@ export function add_role (data) {
 export function del_role(id) {
   return axios.delete('/role/'+id)
 }
+
+// 获取权限值
+export function get_permissionValue(){
+  return axios.get('/permission/total')
+}

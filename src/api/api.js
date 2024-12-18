@@ -90,15 +90,25 @@ export function get_role () {
 
 // 添加角色
 export function add_role (data) {
-  return axios.post('/role',data)
+  return axios.post('/role', data)
 }
 
 // 删除角色
-export function del_role(id) {
-  return axios.delete('/role/'+id)
+export function del_role (id) {
+  return axios.delete('/role/' + id)
 }
 
 // 获取权限值
-export function get_permissionValue(){
+export function get_permissionValue () {
   return axios.get('/permission/total')
+}
+
+// 获取角色拥有的权限
+export function get_permisssionList (id) {
+  return axios.get(`/role/${id}/permission`)
+}
+
+// 更新权限列表
+export function update_permissionList (id, data) {
+  return axios.post(`/role/${id}/update/permission`, data)
 }

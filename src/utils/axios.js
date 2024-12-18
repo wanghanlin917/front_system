@@ -1,63 +1,65 @@
-import axios from "axios";
+import axios from 'axios'
 import { ElMessage, ElNotification } from 'element-plus'
-import { getToken } from '@/utils/auth.js';
+import { getToken } from '@/utils/auth.js'
 
 const service = axios.create({
-    baseURL: "/api"
+  baseURL: '/api'
 })
 
 // 添加请求拦截器
-service.interceptors.request.use(function (config) {
-
+service.interceptors.request.use(
+  function (config) {
     // 往header头自动添加token
     const token = getToken()
     if (token) {
-        config.headers["Authorization"] = "Bearer "+token
+      config.headers['Authorization'] = 'Bearer ' + token
     }
     // console.log("axios",config);
-    return config;
-}, function (error) {
+    return config
+  },
+  function (error) {
     // 对请求错误做些什么
-    return Promise.reject(error);
-});
-
-
-
+    return Promise.reject(error)
+  }
+)
 
 // 添加响应拦截器
-service.interceptors.response.use(function (response) {
+service.interceptors.response.use(
+  function (response) {
     // 对响应数据做点什么
     const apiData = response.data
     // 二进制数据则直接返回
     const responseType = response.request.responseType
-    if (responseType === 'blob' || responseType === "arraybuffer") return apiData
-    // 判断code 
-    const code = apiData.code
-    if (code === undefined && response.status === "204"){
-        ElMessage.error("非本系统接口")
-        return Promise.reject(new Error("非本系统接口"))
+    if (responseType === 'blob' || responseType === 'arraybuffer')
+      return apiData
+    // 判断code
+    let code = apiData.code
+    if (code === undefined && response.status === '204') {
+      ElMessage.error('非本系统接口')
+      return Promise.reject(new Error('非本系统接口'))
     }
     // console.log("ststus",response.status);
     // console.log(response);
-    if (response.status.code === "204"){
-        code = 0
+    if (response.status.code === '204') {
+      code = 0
     }
-    switch (code){
-        case 0:
-            return apiData;
+    switch (code) {
+      case 0:
+        return apiData
     }
-    
-}, function (error) {
+  },
+  function (error) {
     // 对响应错误做点什么
-    console.log(error);
+    console.log(error)
 
     ElNotification({
-        message: error.response.data.message || "请求失败",
-        type: 'error',
-        duration: 3000
+      message: error.response.data.message || '请求失败',
+      type: 'error',
+      duration: 3000
     })
-    return Promise.reject(error);
-})
+    return Promise.reject(error)
+  }
+)
 
 // service.interceptors.response.use(
 //     (response) => {
@@ -74,8 +76,5 @@ service.interceptors.response.use(function (response) {
 //       return Promise.reject(error);
 //     }
 //   );
-
-
-
 
 export default service

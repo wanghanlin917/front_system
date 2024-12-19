@@ -27,26 +27,33 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   function (response) {
     // 对响应数据做点什么
-    const apiData = response.data
+    let apiData = ''
+    if (response.status == '204') {
+      apiData = {'code':0}
+    }else{
+      apiData=response.data
+    }
+    console.log("响应拦截器1111",response.data);
     // 二进制数据则直接返回
     const responseType = response.request.responseType
     if (responseType === 'blob' || responseType === 'arraybuffer')
       return apiData
     // 判断code
-    let code = apiData.code
-    if (code === undefined && response.status === '204') {
+    const code = apiData.code
+    // console.log("响应拦截器",apiData);
+    switch (code) {
+      case 0:
+        return apiData
+      case -1:
+        return apiData
+    }
+    if (code === undefined && response.status !== '204') {
       ElMessage.error('非本系统接口')
       return Promise.reject(new Error('非本系统接口'))
     }
     // console.log("ststus",response.status);
     // console.log(response);
-    if (response.status.code === '204') {
-      code = 0
-    }
-    switch (code) {
-      case 0:
-        return apiData
-    }
+
   },
   function (error) {
     // 对响应错误做点什么

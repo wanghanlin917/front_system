@@ -64,21 +64,33 @@ const confirmFirstDelete = row => {
   console.log('row', row.id)
   del_folder(row.id)
     .then(res => {
-      console.log(res)
+      if(res.code === 0){
+        // console.log(res)
       initFolder()
       ElMessage.success('删除成功')
+      }else{
+        ElMessage.error(res.detail)
+      }
+
     })
     .catch(() => ElMessage.error('删除失败'))
 }
 const confirmSecondDelete = row => {
   // console.log(row.id)
-  del_secondarymenu(row.id).then(() => {
+  del_secondarymenu(row.id).then((res) => {
+    console.log("ssss",res);
+    if(res.code === 0){
+      ElMessage.success("删除成功")
     state.value.secondList = state.value.secondList.filter(item => {
       return item.id !== row.id
     })
     if (row.id === state.value.secondSelected) {
       state.value.secondSelected = 0
     }
+  }
+  else{
+    ElMessage.error(res.detail)
+  }
   })
 }
 

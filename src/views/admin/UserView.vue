@@ -1,26 +1,35 @@
 <script setup>
-import { ref } from 'vue'
+import { ref,onMounted } from 'vue'
+import {get_AdminList} from '@/api/api.js'
+
+
 const employeeList = ref([])
-
-employeeList.value = [
-  {
-    name: 'jk',
-    username: 'jk',
-    phoneNumber: '12520332666',
-    roleName: 'CEO',
-    createTime: '2024.12.19'
-  }
-]
-
+// employeeList.value = [
+//   {
+//     name: 'jk',
+//     username: 'jk',
+//     phoneNumber: '12520332666',
+//     roleName: 'CEO',
+//     createTime: '2024.12.19'
+//   }
+// ]
 const params = ref({
   page: 1,
   pageSize: 2,
   name: ''
 })
-
+const InitAdminList = ()=>{
+  get_AdminList().then((res)=>{
+    employeeList.value=res.data
+  })
+}
 const searchData = ref({ username: '' })
-
 const total = ref(10)
+const loading=false
+
+onMounted(()=>{
+  InitAdminList()
+})
 </script>
 <template>
   <div class="employee-container">
@@ -72,9 +81,16 @@ const total = ref(10)
           <el-table-column
             label="角色"
             width="200"
-            prop="roleName"
+            prop="roles"
             align="center"
-          />
+          >
+        <template #default="scope">
+          <el-tag>
+            {{ scope.row.roles_display.title}}
+          </el-tag>
+
+        </template>
+        </el-table-column>
           <el-table-column
             label="创建时间"
             prop="createTime"
@@ -102,29 +118,18 @@ const total = ref(10)
       </div>
 
       <div class="page-container">
-        <!-- <template> -->
         <el-pagination
           layout="total,prev, pager, next"
           :page-size="params.pageSize"
           :current-page="params.page"
           :total="total"
-          @current-change="pageChange"
-        >
-          <template #total> 共 {{ total }} 条 </template>
-        </el-pagination>
-        <!-- </template> -->
+          @current-change="pageChange"/>
       </div>
     </el-card>
   </div>
 </template>
 
 <style lang="scss" scoped>
-// .employee-container {
-//   // display: flex;
-//   // justify-content: space-between;
-//   // margin-bottom: 20px;
-//   padding: 10px;
-// }
 
 .search-wrapper {
   margin-bottom: 20px;
@@ -140,16 +145,4 @@ const total = ref(10)
   display: flex;
   justify-content: flex-end;
 }
-// .create-container {
-//   margin: 10px 0px;
-// }
-// .page-container {
-//   padding: 4px 0px;
-//   // text-align: right;
-//   // float: right;
-//   margin-left: 777px;
-// }
-// .form-container {
-//   padding: 0px 80px;
-// }
 </style>

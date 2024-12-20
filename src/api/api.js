@@ -112,3 +112,8 @@ export function get_permisssionList (id) {
 export function update_permissionList (id, data) {
   return axios.post(`/role/${id}/update/permission`, data)
 }
+
+// 获取用户列表
+export function get_AdminList() {
+  return axios.get('/admin')
+}

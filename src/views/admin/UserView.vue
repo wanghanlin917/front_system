@@ -1,33 +1,33 @@
 <script setup>
-import { ref,onMounted } from 'vue'
-import {get_AdminList} from '@/api/api.js'
-
+import { ref, onMounted } from 'vue'
+import { get_AdminList } from '@/api/api.js'
+import { cloneDeep } from 'lodash-es'
 
 const employeeList = ref([])
-// employeeList.value = [
-//   {
-//     name: 'jk',
-//     username: 'jk',
-//     phoneNumber: '12520332666',
-//     roleName: 'CEO',
-//     createTime: '2024.12.19'
-//   }
-// ]
+const formData = ref({
+  id: undefined,
+  name: '',
+  username: '',
+  password: '',
+  phoneNumber: '',
+  roles: ''
+})
+const dialogVisible = ref(false)
 const params = ref({
   page: 1,
   pageSize: 2,
   name: ''
 })
-const InitAdminList = ()=>{
-  get_AdminList().then((res)=>{
-    employeeList.value=res.data
+const InitAdminList = () => {
+  get_AdminList().then(res => {
+    employeeList.value = res.data
   })
 }
 const searchData = ref({ username: '' })
 const total = ref(10)
-const loading=false
+const loading = false
 
-onMounted(()=>{
+onMounted(() => {
   InitAdminList()
 })
 </script>
@@ -49,7 +49,9 @@ onMounted(()=>{
     </el-card>
     <el-card v-loading="loading" shadow="never">
       <div class="create-container">
-        <el-button type="primary" @click="addEmployee">添加员工</el-button>
+        <el-button type="primary" @click="dialogVisible = true"
+          >添加员工</el-button
+        >
       </div>
       <div class="table">
         <el-table :data="employeeList">
@@ -78,19 +80,13 @@ onMounted(()=>{
             width="300px"
             align="center"
           />
-          <el-table-column
-            label="角色"
-            width="200"
-            prop="roles"
-            align="center"
-          >
-        <template #default="scope">
-          <el-tag>
-            {{ scope.row.roles_display.title}}
-          </el-tag>
-
-        </template>
-        </el-table-column>
+          <el-table-column label="角色" width="200" prop="roles" align="center">
+            <template #default="scope">
+              <el-tag>
+                {{ scope.row.roles_display.title }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             label="创建时间"
             prop="createTime"
@@ -123,14 +119,49 @@ onMounted(()=>{
           :page-size="params.pageSize"
           :current-page="params.page"
           :total="total"
-          @current-change="pageChange"/>
+          @current-change="pageChange"
+        />
       </div>
     </el-card>
+    <el-dialog
+      v-model="dialogVisible"
+      :title="formData.id === undefined ? '新增用户' : '修改用户'"
+      @close="resetForm"
+    >
+      <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-width="100px"
+        label-position="left"
+      >
+        <el-form-item prop="name" label="姓名">
+          <el-input v-model="formData.name" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item prop="username" label="用户名">
+          <el-input v-model="formData.username" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item prop="phoneNumber" label="电话号码">
+          <el-input v-model="formData.phoneNumber" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item prop="roles" label="角色">
+          <el-input v-model="formData.roles" placeholder="请输入" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          @click="handleCreateOrUpdate"
+          :loading="loading"
+          >确认</el-button
+        >
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="scss" scoped>
-
 .search-wrapper {
   margin-bottom: 20px;
   :deep(.el-card__body) {

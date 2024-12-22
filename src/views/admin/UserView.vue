@@ -127,6 +127,7 @@ onMounted(() => {
       v-model="dialogVisible"
       :title="formData.id === undefined ? '新增用户' : '修改用户'"
       @close="resetForm"
+      @open=""
     >
       <el-form
         ref="formRef"

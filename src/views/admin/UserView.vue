@@ -1,9 +1,29 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { get_AdminList } from '@/api/api.js'
+import { get_AdminList, get_role, add_User } from '@/api/api.js'
 import { cloneDeep } from 'lodash-es'
 
+const handleCreateOrUpdate = () => {
+  formRef.value.validate(flag => {
+    if (!flag) return
+    add_User(formData.value).then(res => {
+      console.log(res)
+    })
+  })
+}
+const formRef = ref(null)
+const resetForm = () => {
+  formRef.value.resetFields()
+  dialogVisible.value = false
+}
+const getRoleList = () => {
+  get_role().then(res => {
+    console.log(res)
+    roleList.value = res.data
+  })
+}
 const employeeList = ref([])
+const roleList = ref([])
 const formData = ref({
   id: undefined,
   name: '',
@@ -11,6 +31,13 @@ const formData = ref({
   password: '',
   phoneNumber: '',
   roles: ''
+})
+const formRules = ref({
+  name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  phoneNumber: [{ required: true, message: '请输入电话号码', trigger: 'blur' }],
+  roles: [{ required: true, message: '请选择角色', trigger: 'blur' }]
 })
 const dialogVisible = ref(false)
 const params = ref({
@@ -127,7 +154,7 @@ onMounted(() => {
       v-model="dialogVisible"
       :title="formData.id === undefined ? '新增用户' : '修改用户'"
       @close="resetForm"
-      @open=""
+      @open="getRoleList"
     >
       <el-form
         ref="formRef"
@@ -146,7 +173,14 @@ onMounted(() => {
           <el-input v-model="formData.phoneNumber" placeholder="请输入" />
         </el-form-item>
         <el-form-item prop="roles" label="角色">
-          <el-input v-model="formData.roles" placeholder="请输入" />
+          <el-select v-model="formData.roles" placeholder="请选择角色">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>

@@ -2,12 +2,16 @@
 import { ref, onMounted } from 'vue'
 import { get_AdminList, get_role, add_User } from '@/api/api.js'
 import { cloneDeep } from 'lodash-es'
+import { ElMessage } from 'element-plus'
 
 const handleCreateOrUpdate = () => {
   formRef.value.validate(flag => {
     if (!flag) return
     add_User(formData.value).then(res => {
       console.log(res)
+      ElMessage.success("添加成功")
+      resetForm()
+      InitAdminList()
     })
   })
 }
@@ -168,6 +172,9 @@ onMounted(() => {
         </el-form-item>
         <el-form-item prop="username" label="用户名">
           <el-input v-model="formData.username" placeholder="请输入" />
+        </el-form-item>
+        <el-form-item prop="password" label="密码">
+          <el-input v-model="formData.password" placeholder="请输入" />
         </el-form-item>
         <el-form-item prop="phoneNumber" label="电话号码">
           <el-input v-model="formData.phoneNumber" placeholder="请输入" />

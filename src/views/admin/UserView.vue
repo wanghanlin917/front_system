@@ -4,12 +4,28 @@ import { get_AdminList, get_role, add_User } from '@/api/api.js'
 import { cloneDeep } from 'lodash-es'
 import { ElMessage } from 'element-plus'
 
+// 页码实现
+const pageChange = index => {
+  // console.log(index)
+  params.value.page = index
+}
+const indexMethod = index => {
+  console.log('index', index)
+}
+
+// 查找实现
+const handleSearch = () => {
+  console.log('查找')
+}
+const resetSearch = () => {
+  console.log('查找重置')
+}
 const handleCreateOrUpdate = () => {
   formRef.value.validate(flag => {
     if (!flag) return
     add_User(formData.value).then(res => {
       console.log(res)
-      ElMessage.success("添加成功")
+      ElMessage.success('添加成功')
       resetForm()
       InitAdminList()
     })
@@ -51,6 +67,7 @@ const params = ref({
 })
 const InitAdminList = () => {
   get_AdminList().then(res => {
+    console.log('数据12111', res.data)
     employeeList.value = res.data
   })
 }
@@ -71,10 +88,8 @@ onMounted(() => {
           <el-input v-model="searchData.username" placeholder="请输入" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch"
-            >查询</el-button
-          >
-          <el-button :icon="Refresh" @click="resetSearch">重置</el-button>
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>

@@ -8,9 +8,13 @@ import { ElMessage } from 'element-plus'
 const pageChange = index => {
   // console.log(index)
   params.value.page = index
+  get_AdminList(params.value.page).then((res)=>{
+    employeeList.value = res.data.data
+  })
 }
 const indexMethod = index => {
-  console.log('index', index)
+  // console.log('index', index)
+  return params.value.pageSize*(params.value.page-1) +index+1
 }
 
 // 查找实现
@@ -62,13 +66,15 @@ const formRules = ref({
 const dialogVisible = ref(false)
 const params = ref({
   page: 1,
-  pageSize: 2,
+  pageSize: 5,
   name: ''
 })
 const InitAdminList = () => {
-  get_AdminList().then(res => {
+  get_AdminList(params.value.page).then(res => {
     console.log('数据12111', res.data)
-    employeeList.value = res.data
+    employeeList.value = res.data.data
+    total.value = res.data.total
+    params.value.pageSize = res.data.page_size
   })
 }
 const searchData = ref({ username: '' })
@@ -146,14 +152,14 @@ onMounted(() => {
             align="center"
           >
             <template #default="scope">
-              <el-button size="mini" type="text">编辑</el-button>
+              <el-button size="" link type="primary">编辑</el-button>
               <el-button
-                size="mini"
-                type="text"
+                size=""
+                link type="primary"
                 @click="delEmployee(scope.row.id)"
                 >删除</el-button
               >
-              <el-button size="mini" type="text">重置密码</el-button>
+              <el-button size="" link type="primary">重置密码</el-button>
             </template>
           </el-table-column>
         </el-table>

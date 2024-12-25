@@ -114,8 +114,8 @@ export function update_permissionList (id, data) {
 }
 
 // 获取用户列表
-export function get_AdminList () {
-  return axios.get('/admin')
+export function get_AdminList (page) {
+  return axios.get(`/admin?page=${page}`)
 }
 
 // 添加用户

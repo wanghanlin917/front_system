@@ -114,11 +114,16 @@ export function update_permissionList (id, data) {
 }
 
 // 获取用户列表
-export function get_AdminList (page) {
-  return axios.get(`/admin?page=${page}`)
+export function get_AdminList (params) {
+  return axios.get('/admin', { params: params })
 }
 
 // 添加用户
 export function add_User (data) {
   return axios.post('/admin', data)
 }
+
+// // 查询姓名的实现
+// export function search_username (params) {
+//   return axios.get('/admin', params)
+// }

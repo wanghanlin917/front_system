@@ -8,21 +8,26 @@ import { ElMessage } from 'element-plus'
 const pageChange = index => {
   // console.log(index)
   params.value.page = index
-  get_AdminList(params.value.page).then((res)=>{
-    employeeList.value = res.data.data
-  })
+  // get_AdminList({ ...params }).then(res => {
+  //   employeeList.value = res.data.data
+  // })
+  InitAdminList()
 }
 const indexMethod = index => {
   // console.log('index', index)
-  return params.value.pageSize*(params.value.page-1) +index+1
+  return params.value.pageSize * (params.value.page - 1) + index + 1
 }
 
 // 查找实现
 const handleSearch = () => {
-  console.log('查找')
+  // console.log('查找')
+  // console.log({ ...searchData.value, ...params.value })
+  // console.log(searchData.value)
+  InitAdminList()
 }
 const resetSearch = () => {
   console.log('查找重置')
+  searchData.value = { username: '' }
 }
 const handleCreateOrUpdate = () => {
   formRef.value.validate(flag => {
@@ -66,11 +71,10 @@ const formRules = ref({
 const dialogVisible = ref(false)
 const params = ref({
   page: 1,
-  pageSize: 5,
-  name: ''
+  pageSize: 5
 })
 const InitAdminList = () => {
-  get_AdminList(params.value.page).then(res => {
+  get_AdminList({ ...searchData.value, ...params.value }).then(res => {
     console.log('数据12111', res.data)
     employeeList.value = res.data.data
     total.value = res.data.total
@@ -155,7 +159,8 @@ onMounted(() => {
               <el-button size="" link type="primary">编辑</el-button>
               <el-button
                 size=""
-                link type="primary"
+                link
+                type="primary"
                 @click="delEmployee(scope.row.id)"
                 >删除</el-button
               >

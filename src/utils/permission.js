@@ -29,7 +29,6 @@ router.beforeEach(async(to,from,next)=>{
     // 设置页面标题
     let title = "SRE运维平台"
     document.title = title
-
     next()
 })
 

@@ -82,14 +82,15 @@ const onSubmit = () => {
 
     login(form.username, form.password)
       .then(response => {
+        console.log("ccccc",response);
         if (response.code === 0) {
           toast('登录成功')
 
           //存储token
-          setToken(response.token)
+          setToken(response.data.token)
 
           router.push('/menu')
-        } else if (response.data.code === 500) {
+        } else if (response.code === 9999) {
           toast('账号或者密码错误', 'error')
         }
       })

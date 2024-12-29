@@ -23,6 +23,7 @@ const handleSearch = () => {
   // console.log('查找')
   // console.log({ ...searchData.value, ...params.value })
   // console.log(searchData.value)
+  params.value.page = 1 
   InitAdminList()
 }
 const resetSearch = () => {

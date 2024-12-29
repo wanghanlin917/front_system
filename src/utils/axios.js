@@ -46,6 +46,8 @@ service.interceptors.response.use(
         return apiData
       case -1:
         return apiData
+      case 9999:
+        return apiData
     }
     if (code === undefined && response.status !== '204') {
       ElMessage.error('非本系统接口')

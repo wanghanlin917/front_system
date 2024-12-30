@@ -23,7 +23,7 @@ const handleSearch = () => {
   // console.log('查找')
   // console.log({ ...searchData.value, ...params.value })
   // console.log(searchData.value)
-  params.value.page = 1 
+  params.value.page = 1
   InitAdminList()
 }
 const resetSearch = () => {
@@ -76,7 +76,7 @@ const params = ref({
 })
 const InitAdminList = () => {
   get_AdminList({ ...searchData.value, ...params.value }).then(res => {
-    console.log('数据12111', res.data)
+    console.log('数据12111', res)
     employeeList.value = res.data.data
     total.value = res.data.total
     params.value.pageSize = res.data.page_size

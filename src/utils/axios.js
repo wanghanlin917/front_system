@@ -1,10 +1,17 @@
 import axios from 'axios'
 import { ElMessage, ElNotification } from 'element-plus'
-import { getToken } from '@/utils/auth.js'
+import { getToken, removeToken } from '@/utils/auth.js'
+// import { removeToken, getToken } from '@/utils/auth'
+import { toast } from '@/utils/tips.js'
 
 const service = axios.create({
   baseURL: '/api'
 })
+function logout () {
+  removeToken('admin-token')
+  toast('Token过期,请重新登录!!!', 'error')
+  location.reload()
+}
 
 // 添加请求拦截器
 service.interceptors.request.use(
@@ -12,7 +19,7 @@ service.interceptors.request.use(
     // 往header头自动添加token
     const token = getToken()
     if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token
+      config.headers['Authorization'] = token
     }
     // console.log("axios",config);
     return config
@@ -29,17 +36,20 @@ service.interceptors.response.use(
     // 对响应数据做点什么
     let apiData = ''
     if (response.status == '204') {
-      apiData = {'code':0}
-    }else{
-      apiData=response.data
+      apiData = { code: 0 }
+    } else {
+      apiData = response.data
     }
-    console.log("响应拦截器1111",response.data);
+    console.log('响应拦截器1111', response.data)
     // 二进制数据则直接返回
     const responseType = response.request.responseType
     if (responseType === 'blob' || responseType === 'arraybuffer')
       return apiData
     // 判断code
-    const code = apiData.code
+    const code = Number(apiData.code)
+    // console.log('code', code)
+    // console.log(typeof code)
+
     // console.log("响应拦截器",apiData);
     switch (code) {
       case 0:
@@ -48,6 +58,12 @@ service.interceptors.response.use(
         return apiData
       case 9999:
         return apiData
+      case 401:
+        console.log('hahahah')
+        return logout()
+      // return
+      case 500:
+        return logout()
     }
     if (code === undefined && response.status !== '204') {
       ElMessage.error('非本系统接口')
@@ -55,7 +71,6 @@ service.interceptors.response.use(
     }
     // console.log("ststus",response.status);
     // console.log(response);
-
   },
   function (error) {
     // 对响应错误做点什么
